@@ -16,7 +16,7 @@ connection = psycopg2.connect(url)
 CREATE_CUSTOMERS_TABLE = (
     "CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT, ig_account TEXT, fav_color TEXT);"
 )
-GET_CUSTOMERS_DATA = "SELECT * FROM customers LIMIT 1000;"
+GET_CUSTOMERS_DATA = "SELECT * FROM customers LIMIT %s OFFSET %s;"
 GET_CUSTOMER_BY_ID = "SELECT * FROM customers WHERE id = %s;"
 INSERT_CUSTOMER_RETURN_DATA = "INSERT INTO customers (name, ig_account, fav_color) VALUES (%s, %s, %s) RETURNING id, name, ig_account, fav_color;"
 UPDATE_CUSTOMER_RETURN_DATA = "UPDATE customers SET name=%s, ig_account=%s, fav_color=%s WHERE id=%s RETURNING id, name, ig_account, fav_color;"
@@ -25,12 +25,16 @@ DELETE_CUSTOMER_RETURN_ID = "DELETE FROM customers WHERE id=%s RETURNING id;"
 # routes
 # === CUSTOMERS ===
 # get all
-@app.get("/api/customers")
-def get_customers():
+@app.get("/api/customers/<int:page>/<int:per_page>")
+def get_customers(page, per_page):
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(GET_CUSTOMERS_DATA)
+                # Calculate offset based on page and per_page
+                offset = (page - 1) * per_page
+
+                # Execute the query with placeholders for LIMIT and OFFSET
+                cursor.execute(GET_CUSTOMERS_DATA, (per_page, offset))
                 columns = cursor.description
                 data = []
                 for value in cursor.fetchall():
@@ -42,7 +46,7 @@ def get_customers():
                     raise HTTPException(status_code=404, detail="Customers not found")
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
-    return {"data": data, "status_code": 200}
+    return {"data": data, "page": page, "per_page": per_page, "status_code": 200}
 
 # get by id
 @app.get("/api/customer/<id>")
