@@ -127,4 +127,3 @@ def delete_customer(id):
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
     return {"id": customer_id, "message": "Customer has been deleted.", "status_code": 200}
-
