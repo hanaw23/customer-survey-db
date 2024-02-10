@@ -14,7 +14,7 @@ connection = psycopg2.connect(url)
 # Model
 # === CUSTOMERS ===
 CREATE_CUSTOMERS_TABLE = (
-    "CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT, ig_account TEXT, fav_color TEXT, is_deleted BOOLEAN, time TIMESTAMP);"
+    "CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT, ig_account TEXT, fav_color TEXT, is_deleted BOOLEAN DEFAULT false, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
 )
 GET_CUSTOMERS_DATA = "SELECT * FROM customers WHERE is_deleted=false ORDER BY time LIMIT %s OFFSET %s;"
 GET_CUSTOMERS_COUNT = "SELECT COUNT(*) FROM customers WHERE is_deleted=false;"
