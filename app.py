@@ -129,11 +129,9 @@ def update_customer(id):
 @app.put("/api/delete/customer/<id>")
 def soft_delete_customer(id):
     try:
-        data = request.get_json()
-        is_deleted = data['is_deleted']
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(SOFT_DELETE_CUSTOMER_RETURN_ID_AND_IS_DELETED, (is_deleted, id))
+                cursor.execute(SOFT_DELETE_CUSTOMER_RETURN_ID_AND_IS_DELETED, (True, id))
                 columns = cursor.description
                 data = {}
                 for value in cursor.fetchall():
