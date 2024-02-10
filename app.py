@@ -14,13 +14,14 @@ connection = psycopg2.connect(url)
 # Model
 # === CUSTOMERS ===
 CREATE_CUSTOMERS_TABLE = (
-    "CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT, ig_account TEXT, fav_color TEXT);"
+    "CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT, ig_account TEXT, fav_color TEXT, is_deleted BOOLEAN, time TIMESTAMP);"
 )
-GET_CUSTOMERS_DATA = "SELECT * FROM customers ORDER BY name ASC LIMIT %s OFFSET %s;"
+GET_CUSTOMERS_DATA = "SELECT * FROM customers WHERE is_deleted=false ORDER BY time LIMIT %s OFFSET %s;"
 GET_CUSTOMERS_COUNT = "SELECT COUNT(*) FROM customers;"
 GET_CUSTOMER_BY_ID = "SELECT * FROM customers WHERE id = %s;"
-INSERT_CUSTOMER_RETURN_DATA = "INSERT INTO customers (name, ig_account, fav_color) VALUES (%s, %s, %s) RETURNING id, name, ig_account, fav_color;"
-UPDATE_CUSTOMER_RETURN_DATA = "UPDATE customers SET name=%s, ig_account=%s, fav_color=%s WHERE id=%s RETURNING id, name, ig_account, fav_color;"
+INSERT_CUSTOMER_RETURN_DATA = "INSERT INTO customers (name, ig_account, fav_color) VALUES (%s, %s, %s) RETURNING id, name, ig_account, fav_color, is_deleted, time;"
+UPDATE_CUSTOMER_RETURN_DATA = "UPDATE customers SET name=%s, ig_account=%s, fav_color=%s WHERE id=%s RETURNING id, name, ig_account, fav_color, is_deleted, time;"
+SOFT_DELETE_CUSTOMER_RETURN_ID_AND_IS_DELETED = "UPDATE customers SET is_deleted=%s WHERE id=%s RETURNING id, is_deleted;"
 DELETE_CUSTOMER_RETURN_ID = "DELETE FROM customers WHERE id=%s RETURNING id;"
 
 # routes
@@ -124,7 +125,30 @@ def update_customer(id):
     return {"data": data, "message": f"{name} data has been updated.", "status_code": 200}
 
 # delete
-@app.delete("/api/delete/customer/<id>")
+# soft delete
+@app.put("/api/delete/customer/<id>")
+def soft_delete_customer(id):
+    try:
+        data = request.get_json()
+        is_deleted = data['is_deleted']
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(SOFT_DELETE_CUSTOMER_RETURN_ID_AND_IS_DELETED, (is_deleted, id))
+                columns = cursor.description
+                data = {}
+                for value in cursor.fetchall():
+                    temp = {}
+                    for (index, col) in enumerate(value):
+                        temp[columns[index][0]] = col
+                    data = temp
+                if not data:
+                    raise HTTPException(status_code=404, detail="Customer not found")
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=str(error))
+    return {"data": data, "message": "Customer has been deleted.", "status_code": 200}
+
+# hard delete
+@app.delete("/api/permanent/delete/customer/<id>")
 def delete_customer(id):
     try:
         with connection:
