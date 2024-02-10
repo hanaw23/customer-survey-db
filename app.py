@@ -20,7 +20,7 @@ GET_CUSTOMERS_DATA = "SELECT * FROM customers WHERE is_deleted=false ORDER BY ti
 GET_CUSTOMERS_COUNT = "SELECT COUNT(*) FROM customers WHERE is_deleted=false;"
 GET_CUSTOMER_BY_ID = "SELECT * FROM customers WHERE id = %s;"
 INSERT_CUSTOMER_RETURN_DATA = "INSERT INTO customers (name, ig_account, fav_color) VALUES (%s, %s, %s) RETURNING id, name, ig_account, fav_color, is_deleted, time;"
-UPDATE_CUSTOMER_RETURN_DATA = "UPDATE customers SET name=%s, ig_account=%s, fav_color=%s WHERE id=%s RETURNING id, name, ig_account, fav_color, is_deleted, time;"
+UPDATE_CUSTOMER_RETURN_DATA = "UPDATE customers SET name=%s, ig_account=%s, fav_color=%s, time=CURRENT_TIMESTAMP WHERE id=%s RETURNING id, name, ig_account, fav_color, is_deleted, time;"
 SOFT_DELETE_CUSTOMER_RETURN_ID_AND_IS_DELETED = "UPDATE customers SET is_deleted=%s WHERE id=%s RETURNING id, is_deleted;"
 DELETE_CUSTOMER_RETURN_ID = "DELETE FROM customers WHERE id=%s RETURNING id;"
 
