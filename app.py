@@ -16,7 +16,7 @@ connection = psycopg2.connect(url)
 CREATE_CUSTOMERS_TABLE = (
     "CREATE TABLE IF NOT EXISTS customers (id SERIAL PRIMARY KEY, name TEXT, ig_account TEXT, fav_color TEXT, is_deleted BOOLEAN DEFAULT false, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
 )
-GET_CUSTOMERS_DATA = "SELECT * FROM customers WHERE is_deleted=false ORDER BY time LIMIT %s OFFSET %s;"
+GET_CUSTOMERS_DATA = "SELECT * FROM customers WHERE is_deleted=false ORDER BY time DESC LIMIT %s OFFSET %s;"
 GET_CUSTOMERS_COUNT = "SELECT COUNT(*) FROM customers WHERE is_deleted=false;"
 GET_CUSTOMER_BY_ID = "SELECT * FROM customers WHERE id = %s;"
 INSERT_CUSTOMER_RETURN_DATA = "INSERT INTO customers (name, ig_account, fav_color) VALUES (%s, %s, %s) RETURNING id, name, ig_account, fav_color, is_deleted, time;"
