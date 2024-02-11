@@ -2,6 +2,12 @@
 
 Customer survey system database.
 
+Deployment URL:
+"customer-survey-db.vercel.app/"
+
+Github Repo: https://github.com/hanaw23/customer-survey-db
+
+
 # NOTE:
 
 steps to run API in local:
@@ -13,5 +19,4 @@ steps to run API in local:
 5. Type 'flask run' in your terminal to run the program.
 6. Read the documentation to see how to use the API, here: https://documenter.getpostman.com/view/19674035/2s9YyzcdLD
 
-Deployment URL:
-"customer-survey-db.vercel.app/"
+
