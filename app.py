@@ -26,6 +26,9 @@ DELETE_CUSTOMER_RETURN_ID = "DELETE FROM customers WHERE id=%s RETURNING id;"
 
 # routes
 # === CUSTOMERS ===
+@app.route("/")
+def home():
+    return 'Welcome to customer survey API'
 # get all
 @app.get("/api/customers/<int:page>/<int:per_page>")
 def get_customers(page, per_page):
