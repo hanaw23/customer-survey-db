@@ -3,9 +3,10 @@
 Customer survey system database.
 
 Deployment URL:
-["customer-survey-db.vercel.app/"](https://customer-survey-db.vercel.app/)
+https://customer-survey-db.vercel.app/
 
-Github Repo: https://github.com/hanaw23/customer-survey-db
+Github Repo: 
+https://github.com/hanaw23/customer-survey-db
 
 
 # NOTE:
